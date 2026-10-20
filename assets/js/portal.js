@@ -8,8 +8,10 @@
   const ease = t => t * t * (3 - 2 * t);
 
   // video (optional): drop assets/video/intro.mp4 and it takes over
-  video.addEventListener('loadeddata', () => { portal.classList.add('has-video'); video.play().catch(() => {}); });
-  video.addEventListener('error', () => video.remove());
+  const showVideo = () => { portal.classList.add('has-video'); video.play().catch(() => {}); };
+  if (video.readyState >= 2) showVideo();
+  ['loadeddata', 'canplay', 'playing'].forEach(ev => video.addEventListener(ev, showVideo, { once: true }));
+  video.play().then(showVideo).catch(() => {});
 
   // star warp (fallback + overlay)
   let W, H, stars = [];
